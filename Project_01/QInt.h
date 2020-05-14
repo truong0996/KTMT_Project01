@@ -5,21 +5,33 @@
 #include <algorithm>
 //#pragma once
 
-constexpr auto MAX_CAPACITY = 4;;
+constexpr auto MAX_CAPACITY = 4;
 
 class QInt
 {
 private:
-	int arrBits[MAX_CAPACITY];			//This is what QInt actually is
+	unsigned int arrBits[MAX_CAPACITY];			//This is what QInt actually is
 public:
 	QInt();
 	~QInt();
-
-	//Convert QInt to Hexadecimal
+	QInt(int x);
+	QInt(std::string x);
+	QInt operator~();
+	QInt operator~() const;
+	QInt& operator=(const QInt &x);
+	QInt operator+(const QInt &x);
+	QInt operator-(const QInt &x);
+	bool operator<(const QInt &x);
 	std::string toHexa();
-	//Convert QInt to Binary
 	std::string toBin();
-
+	friend QInt abs(QInt x);
+	inline int getBit(int pos) const;
+	inline int getBit(int pos);
+	inline void toggleBit(int pos);
+	std::string stringDiv2(std::string str);
+	std::string toString();
+	std::string squareString(int n);
+	std::string addString(std::string a, std::string b);
 };
 
 //Hexadecimal represent in bit
