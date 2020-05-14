@@ -2,7 +2,8 @@
 #include <string>
 #include <vector>
 #include <map>
-#pragma once
+#include <algorithm>
+//#pragma once
 
 constexpr auto MAX_CAPACITY = 4;;
 
@@ -14,10 +15,10 @@ public:
 	QInt();
 	~QInt();
 
-	//Convert Binary to Hexadecimal
-	std::string binToHexa();
-	//Convert Hexadecimal to Binary
-	std::string hexaToBin();
+	//Convert QInt to Hexadecimal
+	std::string toHexa();
+	//Convert QInt to Binary
+	std::string toBin();
 
 };
 

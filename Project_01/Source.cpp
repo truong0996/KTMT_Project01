@@ -4,7 +4,8 @@
 int main(int argc, char* argv[])
 {
 	QInt a;
-	std::cout << a.binToHexa();
+	std::cout << a.toHexa() << std::endl;
+	std::cout << a.toBin() << std::endl;
 	std::cin.get();
 	return 0;
 }
