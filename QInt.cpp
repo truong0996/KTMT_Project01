@@ -337,13 +337,18 @@ QInt QInt::rol()
 	QInt res = *this;
 	int n = this->toBin().length();
 
-	//int tempBit = this->getBit(127 - (n - 1)); //lấy bit trái nhất
+	int tempBit = this->getBit(127 - (n - 1)); //lấy bit trái nhất
 
-	*this = *this << 1; //dịch trái
-
-	this->turnOffBit(127 - n); //tắt bit 
-
-	this->turnOnBit(127); // bật bit cuối
+	if (tempBit == 1)
+	{
+		*this = *this << 1; //dịch trái
+		this->turnOffBit(127 - n); //tắt bit 
+		this->turnOnBit(127); // bật bit cuối
+	}
+	else
+	{
+		*this = *this << 1; //dịch trái
+	}
 
 
 	return *this;
