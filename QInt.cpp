@@ -3,7 +3,7 @@
 QInt::QInt() //Initialize 0 for arrBits
 {
 	for (int i = 0; i < MAX_CAPACITY; i++)
-		arrBits[i] = 0;	
+		arrBits[i] = 0;
 }
 
 QInt::~QInt()
@@ -50,6 +50,14 @@ QInt::QInt(std::string x)
 	}
 	if (isNegative)
 		*this = ~(*this) + 1;
+}
+
+QInt::QInt(const QInt &x)
+{
+	for (int i = 0; i < MAX_CAPACITY; i++)
+	{
+		arrBits[i] = x.arrBits[i];
+	}
 }
 
 // Set value method
@@ -121,7 +129,7 @@ bool QInt::operator<(const QInt &x)
 	return false;
 }
 
-bool QInt::operator>(const QInt &x) 
+bool QInt::operator>(const QInt &x)
 {
 	if (*this < x)
 		return false;
@@ -137,7 +145,6 @@ bool QInt::operator>=(const QInt &x)
 	return true;
 }
 
-
 bool QInt::operator<=(const QInt &x)
 {
 	if (*this > x)
@@ -145,6 +152,94 @@ bool QInt::operator<=(const QInt &x)
 	return true;
 }
 
+// AND operator
+QInt QInt::operator&(const QInt &x)
+{
+	QInt temp;
+	for (int i = 0; i < MAX_CAPACITY; i++)
+	{
+		temp.arrBits[i] = this->arrBits[i] & x.arrBits[i];
+	}
+	return temp;
+}
+QInt QInt::operator&(int x)
+{
+	return this->operator&(QInt(x));
+}
+
+// OR operator
+QInt QInt::operator|(const QInt &x)
+{
+	QInt temp;
+	for (int i = 0; i < MAX_CAPACITY; i++)
+	{
+		temp.arrBits[i] = this->arrBits[i] | x.arrBits[i];
+	}
+	return temp;
+}
+QInt QInt::operator|(int x)
+{
+	return this->operator|(QInt(x));
+}
+
+// XOR operator
+QInt QInt::operator^(const QInt &x)
+{
+	QInt temp;
+	for (int i = 0; i < MAX_CAPACITY; i++)
+	{
+		temp.arrBits[i] = this->arrBits[i] ^ x.arrBits[i];
+	}
+	return temp;
+}
+QInt QInt::operator^(int x)
+{
+	return this->operator^(QInt(x));
+}
+
+// Shift left logic QInt
+QInt QInt::operator<<(int x)
+{
+	if (x > 128)
+		return *this;
+	int quot = x / 32; //quotient
+	int rm = x % 32;   //remainder
+	QInt temp;
+	if (quot > 0)
+	{
+		if (quot == 4) {
+			*this = temp;
+			return *this;
+		}
+		// shift left 32 bits / 1 quot unit
+		for (int i = MAX_CAPACITY - 1 - quot; i >= 0; i--)
+		{
+			temp.arrBits[i] = this->arrBits[i + 1];
+			*this = temp;
+			return this->operator<<(rm);
+		}
+	}
+	// store *this in temp
+	temp = *this;
+	// SHL x bits
+	for (int i = MAX_CAPACITY - 1; i >= 0; i--)
+	{
+		this->arrBits[i] = this->arrBits[i] << x;
+	}
+	// SHL x bits lost in the above step
+	for (int i = MAX_CAPACITY - 1; i > 0; i--)
+	{
+		for (int j = 0; j < x; j++)
+		{
+			int msb = (MAX_CAPACITY - i) * 32 - 1;
+			
+			bool bit_temp = temp.getBit(msb - j);
+			if (bit_temp)
+				this->toggleBit(msb + x - j);
+		}
+	}
+	return *this;
+}
 
 // Bitwise operator not
 QInt QInt::operator~()
@@ -251,7 +346,7 @@ std::string QInt::toBin()
 	return result;
 }
 
-// get bit value at 'pos'th
+// get bit value at 'pos'th 
 int QInt::getBit(int pos) const
 {
 	return (arrBits[pos / 32] >> (31 - pos % 32)) & 1;
