@@ -331,6 +331,30 @@ QInt abs(QInt x)
 	return x;
 }
 
+
+QInt QInt::rol()
+{
+	QInt res = *this;
+	int n = this->toBin().length();
+
+	//int tempBit = this->getBit(127 - (n - 1)); //lấy bit trái nhất
+
+	*this = *this << 1; //dịch trái
+
+	this->turnOffBit(127 - n); //tắt bit 
+
+	this->turnOnBit(127); // bật bit cuối
+
+
+	return *this;
+}
+
+QInt QInt::ror()
+{
+	//Cái này chưa code
+	return *this;
+}
+
 //Convert QInt to Hexadecimal
 std::string QInt::toHexa()
 {
@@ -410,6 +434,20 @@ std::string QInt::toBin()
 	std::reverse(result.begin(), result.end());
 	return result;
 }
+
+
+void QInt::turnOnBit(int pos)
+{
+	*this = *this | (1 << (1 - 1));
+	this->arrBits[pos / 32] |= (1 << (31 - pos % 32));
+}
+
+void QInt::turnOffBit(int pos)
+{
+	//*this = *this & ~(1 << n);
+	this->arrBits[pos / 32] &= ~(1 << (31 - pos % 32));
+}
+
 
 // get bit value at 'pos'th
 int QInt::getBit(int pos) const

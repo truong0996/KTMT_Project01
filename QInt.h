@@ -36,9 +36,14 @@ public:
 	QInt operator<<(int x);
 	QInt operator>>(int x);
 
+	QInt rol();
+	QInt ror();
+
 	std::string toHexa();
 	std::string toBin();
 	friend QInt abs(QInt x);
+	void turnOnBit(int pos);
+	void turnOffBit(int pos);
 	inline int getBit(int pos) const;
 	inline int getBit(int pos);
 	inline void toggleBit(int pos);
