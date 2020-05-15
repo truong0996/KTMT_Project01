@@ -121,9 +121,6 @@ bool QInt::operator==(const QInt &x)
 bool QInt::operator<(const QInt &x)
 {
 	QInt t = *this - x;
-	int temp1 = (1 << 31) + 1;
-	int temp2 = t.arrBits[0];
-	int temp = temp1 & temp2;
 	if (((1 << 31) + 1 & t.arrBits[0]) == 1)
 		return true;
 	return false;
@@ -215,7 +212,7 @@ QInt QInt::operator<<(int x)
 		// shift left 32 bits / 1 quot unit
 		for (int i = MAX_CAPACITY - 1 - quot; i >= 0; i--)
 		{
-			temp.arrBits[i] = this->arrBits[i + 1];
+			temp.arrBits[i] = this->arrBits[i + quot];
 		}
 		*this = temp;
 		return this->operator<<(rm);
@@ -236,6 +233,74 @@ QInt QInt::operator<<(int x)
 			int bit_temp = temp.getBit(127 - (msb - j));
 			if (bit_temp)
 				this->toggleBit(127 - (msb - j + x));
+		}
+	}
+	return *this;
+}
+
+// Shift Arithmetic Right QInt
+QInt QInt::operator>>(int x)
+{
+	if (x > 128)
+		return *this;
+	int bit_sign = 0;
+	QInt temp;
+	if (*this < temp) {		// *this is negative
+		bit_sign = 1;
+	}
+	int quot = x / 32; //quotient
+	int rm = x % 32;   //remainder
+	if (quot > 0)
+	{
+		if (quot == 4)
+		{ // shift 128 bits = init 1 if *this < 0
+			// else init 0
+			if (bit_sign == 1)
+				*this = QInt(-1);
+			else
+				*this = temp;
+			return *this;
+		}
+		// shift right 32 bits / 1 quot unit
+		for (int i = MAX_CAPACITY - 1 - quot; i >= 0; i--)
+		{
+			temp.arrBits[i + quot] = this->arrBits[i];
+		}
+		// Shift right sign bit
+		if (bit_sign == 1)
+		{
+			for (int i = 1; i <= quot*32; i++)
+			{
+				temp.toggleBit(i);
+			}
+		}
+		*this = temp;
+		return this->operator>>(rm);
+	}
+	// store *this in temp
+	temp = *this;
+	// SAR x bits
+	for (int i = MAX_CAPACITY - 1; i >= 0; i--)
+	{
+		this->arrBits[i] = this->arrBits[i] >> x;
+	}
+	// SAR x bits lost in the above step
+	for (int i = 0; i < MAX_CAPACITY - 1; i++)
+	{
+		for (int j = 0; j < x; j++)
+		{
+			int lsb = (i + 1) * 32;
+			int bit_temp = temp.getBit(127 - (lsb + j));
+			if (bit_temp)
+				this->toggleBit(127 - (lsb + j - x));
+		}
+	}
+	// Shift right sign bit
+	if (bit_sign == 1)
+	{
+		for (int i = 0; i < x; i++)
+		{
+			this->toggleBit(i + 1);
 		}
 	}
 	return *this;
@@ -395,7 +460,7 @@ std::string QInt::toString()
 		if (bit == 1)
 		{
 			std::string t = temp.squareString(127 - i); // 2^(i-1)
-			result = temp.addString(result, t);			// + 2^(i-1)
+			result = temp.addString(result, t);			// += 2^(i-1)
 		}
 	}
 	QInt _temp;

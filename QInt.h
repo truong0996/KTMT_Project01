@@ -10,7 +10,7 @@ constexpr auto MAX_CAPACITY = 4;
 class QInt
 {
 private:
-	int arrBits[MAX_CAPACITY];			//This is what QInt actually is
+	unsigned int arrBits[MAX_CAPACITY];			//This is what QInt actually is
 public:
 	QInt();
 	~QInt();
@@ -34,6 +34,7 @@ public:
 	QInt operator^(const QInt &x);
 	QInt operator^(int x);
 	QInt operator<<(int x);
+	QInt operator>>(int x);
 
 	std::string toHexa();
 	std::string toBin();
