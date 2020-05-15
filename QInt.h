@@ -21,7 +21,11 @@ public:
 	QInt& operator=(const QInt &x);
 	QInt operator+(const QInt &x);
 	QInt operator-(const QInt &x);
+	bool operator==(const QInt &x);
 	bool operator<(const QInt &x);
+	bool operator>(const QInt &x);
+	bool operator>=(const QInt &x);
+	bool operator<=(const QInt &x);
 	std::string toHexa();
 	std::string toBin();
 	friend QInt abs(QInt x);

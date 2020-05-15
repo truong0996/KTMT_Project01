@@ -100,13 +100,51 @@ QInt QInt::operator-(const QInt &x)
 	return res;
 }
 
+bool QInt::operator==(const QInt &x)
+{
+	for (int i = 0; i < MAX_CAPACITY; i++)
+	{
+		if (this->arrBits[i] != x.arrBits[i])
+			return false;
+	}
+	return true;
+}
+
 bool QInt::operator<(const QInt &x)
 {
 	QInt t = *this - x;
-	if ((1 << 31 & t.arrBits[2]) == 0)
+	int temp1 = (1 << 31) + 1;
+	int temp2 = t.arrBits[0];
+	int temp = temp1 & temp2;
+	if (((1 << 31) + 1 & t.arrBits[0]) == 1)
+		return true;
+	return false;
+}
+
+bool QInt::operator>(const QInt &x) 
+{
+	if (*this < x)
+		return false;
+	else if (*this == x)
 		return false;
 	return true;
 }
+
+bool QInt::operator>=(const QInt &x)
+{
+	if (*this < x)
+		return false;
+	return true;
+}
+
+
+bool QInt::operator<=(const QInt &x)
+{
+	if (*this > x)
+		return false;
+	return true;
+}
+
 
 // Bitwise operator not
 QInt QInt::operator~()
