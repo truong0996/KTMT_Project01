@@ -69,7 +69,7 @@ QInt QInt::operator+(const QInt &x)
 {
 	QInt rs;
 	int temp = 0;
-	int bit, xBit;
+	unsigned int bit, xBit;
 	for (int i = 127; i > 0; i--)
 	{
 		bit = this->getBit(i);
@@ -77,14 +77,15 @@ QInt QInt::operator+(const QInt &x)
 		switch (bit + xBit + temp)
 		{
 		case 3:
-			rs.toggleBit(i);
 			temp = 1;
+			rs.toggleBit(i);
 			break;
 		case 2:
 			temp = 1;
 			break;
 		case 1:
 			rs.toggleBit(i);
+			temp = 0;
 			break;
 		}
 	}
@@ -94,15 +95,17 @@ QInt QInt::operator+(const QInt &x)
 // subtract QInt ( + (-x))
 QInt QInt::operator-(const QInt &x)
 {
-	return *this + 1 + (~x);
+	QInt res;
+	res = *this + 1 + (~x);
+	return res;
 }
 
 bool QInt::operator<(const QInt &x)
 {
 	QInt t = *this - x;
-	if ((1 << 31 & t.arrBits[0]) == 1)
-		return true;
-	return false;
+	if ((1 << 31 & t.arrBits[2]) == 0)
+		return false;
+	return true;
 }
 
 // Bitwise operator not
