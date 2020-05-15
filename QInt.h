@@ -10,7 +10,7 @@ constexpr auto MAX_CAPACITY = 4;
 class QInt
 {
 private:
-	unsigned int arrBits[MAX_CAPACITY];			//This is what QInt actually is
+	int arrBits[MAX_CAPACITY];			//This is what QInt actually is
 public:
 	QInt();
 	~QInt();

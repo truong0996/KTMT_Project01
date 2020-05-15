@@ -207,7 +207,8 @@ QInt QInt::operator<<(int x)
 	QInt temp;
 	if (quot > 0)
 	{
-		if (quot == 4) {
+		if (quot == 4)
+		{ // shift 128 bits = init 0
 			*this = temp;
 			return *this;
 		}
@@ -215,9 +216,9 @@ QInt QInt::operator<<(int x)
 		for (int i = MAX_CAPACITY - 1 - quot; i >= 0; i--)
 		{
 			temp.arrBits[i] = this->arrBits[i + 1];
-			*this = temp;
-			return this->operator<<(rm);
 		}
+		*this = temp;
+		return this->operator<<(rm);
 	}
 	// store *this in temp
 	temp = *this;
@@ -229,13 +230,12 @@ QInt QInt::operator<<(int x)
 	// SHL x bits lost in the above step
 	for (int i = MAX_CAPACITY - 1; i > 0; i--)
 	{
-		for (int j = 0; j < x; j++)
+		for (int j = 1; j <= x; j++)
 		{
-			int msb = (MAX_CAPACITY - i) * 32 - 1;
-			
-			bool bit_temp = temp.getBit(msb - j);
+			int msb = (MAX_CAPACITY - i) * 32;
+			int bit_temp = temp.getBit(127 - (msb - j));
 			if (bit_temp)
-				this->toggleBit(msb + x - j);
+				this->toggleBit(127 - (msb - j + x));
 		}
 	}
 	return *this;
@@ -346,7 +346,7 @@ std::string QInt::toBin()
 	return result;
 }
 
-// get bit value at 'pos'th 
+// get bit value at 'pos'th
 int QInt::getBit(int pos) const
 {
 	return (arrBits[pos / 32] >> (31 - pos % 32)) & 1;
