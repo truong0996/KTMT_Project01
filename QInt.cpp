@@ -125,6 +125,10 @@ bool QInt::operator<(const QInt &x)
 		return true;
 	return false;
 }
+bool QInt::operator<(int x)
+{
+	return this->operator<(QInt(x));
+}
 
 bool QInt::operator>(const QInt &x)
 {
@@ -134,6 +138,10 @@ bool QInt::operator>(const QInt &x)
 		return false;
 	return true;
 }
+bool QInt::operator>(int x)
+{
+	return this->operator>(QInt(x));
+}
 
 bool QInt::operator>=(const QInt &x)
 {
@@ -141,12 +149,20 @@ bool QInt::operator>=(const QInt &x)
 		return false;
 	return true;
 }
+bool QInt::operator>=(int x)
+{
+	return this->operator>=(QInt(x));
+}
 
 bool QInt::operator<=(const QInt &x)
 {
 	if (*this > x)
 		return false;
 	return true;
+}
+bool QInt::operator<=(int x)
+{
+	return this->operator<=(QInt(x));
 }
 
 // AND operator
@@ -245,7 +261,8 @@ QInt QInt::operator>>(int x)
 		return *this;
 	int bit_sign = 0;
 	QInt temp;
-	if (*this < temp) {		// *this is negative
+	if (*this < temp)
+	{ // *this is negative
 		bit_sign = 1;
 	}
 	int quot = x / 32; //quotient
@@ -269,7 +286,7 @@ QInt QInt::operator>>(int x)
 		// Shift right sign bit
 		if (bit_sign == 1)
 		{
-			for (int i = 1; i <= quot*32; i++)
+			for (int i = 1; i <= quot * 32; i++)
 			{
 				temp.toggleBit(i);
 			}
@@ -331,7 +348,6 @@ QInt abs(QInt x)
 	return x;
 }
 
-
 QInt QInt::rol()
 {
 	QInt res = *this;
@@ -341,15 +357,14 @@ QInt QInt::rol()
 
 	if (tempBit == 1)
 	{
-		*this = *this << 1; //dịch trái
-		this->turnOffBit(127 - n); //tắt bit 
-		this->turnOnBit(127); // bật bit cuối
+		*this = *this << 1;		   //dịch trái
+		this->turnOffBit(127 - n); //tắt bit
+		this->turnOnBit(127);	   // bật bit cuối
 	}
 	else
 	{
 		*this = *this << 1; //dịch trái
 	}
-
 
 	return *this;
 }
@@ -440,7 +455,6 @@ std::string QInt::toBin()
 	return result;
 }
 
-
 void QInt::turnOnBit(int pos)
 {
 	*this = *this | (1 << (1 - 1));
@@ -452,7 +466,6 @@ void QInt::turnOffBit(int pos)
 	//*this = *this & ~(1 << n);
 	this->arrBits[pos / 32] &= ~(1 << (31 - pos % 32));
 }
-
 
 // get bit value at 'pos'th
 int QInt::getBit(int pos) const
@@ -581,4 +594,92 @@ std::string QInt::addString(std::string a, std::string b)
 		std::string rs(c, alen);
 		return rs;
 	}
+}
+
+// Use Binary Division Algorithm to execute
+// ref: https://en.wikipedia.org/wiki/Division_algorithm
+QInt QInt::operator/(QInt x)
+{
+	// absorb 2 QInt first
+	int isNegative = 0;
+	if (*this < 0 || x < 0)
+	{
+		isNegative = 1;
+		*this = abs(*this);
+		x = abs(x);
+	}
+
+	if (*this < x)
+	{
+		QInt _temp; //return 0
+		return _temp;
+	}
+
+	QInt q = 0; // quotient
+	QInt r = 0; // remainder
+	int n = 128;
+	for (int i = n - 1; i >= 0; i--)
+	{
+		q = q << 1;
+		r = r << 1;
+		// get bit at i-th in *this
+		// and set it into remainder 0-th bit
+		r = r | ((*this & ((QInt)1 << i)) >> i);
+
+		// if remainder >= divisor
+		if (r >= x)
+		{
+			r = r - x;
+			q = q | 1;	// set quotient 's 0-th bit = 1
+		}
+	}
+	if (isNegative)
+	{
+		q = ~q + 1;
+		r = ~r + 1;
+	}
+	return q;
+}
+
+QInt QInt::operator%(QInt x)
+{
+	// absorb 2 QInt first
+	int isNegative = 0;
+	if (*this < 0 || x < 0)
+	{
+		isNegative = 1;
+		*this = abs(*this);
+		x = abs(x);
+	}
+
+	if (*this < x)
+	{
+		QInt _temp; //return 0
+		return _temp;
+	}
+
+	QInt q = 0; // quotient
+	QInt r = 0; // remainder
+	int n = 128;
+	for (int i = n - 1; i >= 0; i--)
+	{
+		q = q << 1;
+		r = r << 1;
+		// get bit at i-th in *this
+		// and set it into remainder 0-th bit
+		r = r | ((*this & ((QInt)1 << i)) >> i);
+
+		// if remainder >= divisor
+		if (r >= x)
+		{
+			r = r - x;
+			q = q | 1;	// set quotient 's 0-th bit = 1
+		}
+	}
+	if (isNegative)
+	{
+		q = ~q + 1;
+		r = ~r + 1;
+	}
+	return r;
 }

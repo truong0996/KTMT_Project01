@@ -27,6 +27,11 @@ public:
 	bool operator>(const QInt &x);
 	bool operator>=(const QInt &x);
 	bool operator<=(const QInt &x);
+	bool operator<(int x);
+	bool operator>(int x);
+	bool operator>=(int x);
+	bool operator<=(int x);
+	
 	QInt operator&(const QInt &x);
 	QInt operator&(int x);
 	QInt operator|(const QInt &x);
@@ -38,6 +43,9 @@ public:
 
 	QInt rol();
 	QInt ror();
+
+	QInt operator/(QInt x);
+	QInt operator%(QInt x);
 
 	std::string toHexa();
 	std::string toBin();
