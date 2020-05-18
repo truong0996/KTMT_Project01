@@ -350,13 +350,13 @@ QInt abs(QInt x)
 
 QInt QInt::rol()
 {
-	int n = this->toBin().length();
+	/*int n = this->toBin().length();*/
 
-	int tempBit = this->getBit(127 - (n - 1)); //lấy bit trái nhất
+	int tempBit = this->getBit(0); //lấy bit trái nhất
 	*this = *this << 1;						   //dịch trái
 	if (tempBit == 1)
 	{
-		this->turnOffBit(127 - n); //tắt bit
+		this->turnOffBit(0); //tắt bit
 		this->turnOnBit(127);	   // bật bit cuối
 	}
 
@@ -366,12 +366,10 @@ QInt QInt::rol()
 QInt QInt::ror()
 {
 	int n = this->toBin().length();
-
 	int tempBit = this->getBit(127);
 	*this = *this >> 1;
 	if (tempBit == 1)
-
-		this->turnOnBit(127 - (n - 1));
+		this->turnOnBit(0);
 	return *this;
 }
 
