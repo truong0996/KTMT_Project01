@@ -47,8 +47,10 @@ public:
 	QInt operator/(QInt x);
 	QInt operator%(QInt x);
 
-	std::string toHexa();
-	std::string toBin();
+	std::string toHexaString();
+	std::string toBinString();
+	void readBinString(std::string bin);
+	void readHexString(std::string hex);
 	friend QInt abs(QInt x);
 	void turnOnBit(int pos);
 	void turnOffBit(int pos);

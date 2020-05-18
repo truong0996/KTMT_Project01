@@ -353,11 +353,11 @@ QInt QInt::rol()
 	/*int n = this->toBin().length();*/
 
 	int tempBit = this->getBit(0); //lấy bit trái nhất
-	*this = *this << 1;						   //dịch trái
+	*this = *this << 1;			   //dịch trái
 	if (tempBit == 1)
 	{
-		this->turnOffBit(0); //tắt bit
-		this->turnOnBit(127);	   // bật bit cuối
+		this->turnOffBit(0);  //tắt bit
+		this->turnOnBit(127); // bật bit cuối
 	}
 
 	return *this;
@@ -365,7 +365,7 @@ QInt QInt::rol()
 
 QInt QInt::ror()
 {
-	int n = this->toBin().length();
+	//int n = this->toBin().length();
 	int tempBit = this->getBit(127);
 	*this = *this >> 1;
 	if (tempBit == 1)
@@ -374,7 +374,7 @@ QInt QInt::ror()
 }
 
 //Convert QInt to Hexadecimal
-std::string QInt::toHexa()
+std::string QInt::toHexaString()
 {
 	std::string result = "";
 	//loop through arrBits[4]
@@ -422,7 +422,7 @@ std::string QInt::toHexa()
 }
 
 //Convert QInt to Binary
-std::string QInt::toBin()
+std::string QInt::toBinString()
 {
 	std::string result = "";
 	//loop through arrBits[4]
@@ -451,6 +451,43 @@ std::string QInt::toBin()
 	//reverse
 	std::reverse(result.begin(), result.end());
 	return result;
+}
+
+// Read Binary String
+void QInt::readBinString(std::string bin)
+{
+	if (bin.length() > 128)
+		return;
+	QInt temp;
+	// read from the largest index of binary string
+	// store to temp
+	for (int i = bin.length() - 1; i >= 0; i--)
+	{
+		int bit = bin[i] - '0';
+		if (bit)
+			temp.toggleBit(127 + i - bin.length() + 1);
+	}
+	*this = temp;
+}
+
+// Read Hexa String
+void QInt::readHexString(std::string hex)
+{
+	if (hex.length() > 32)
+		return;
+	std::string bin = "";
+	for (int i = 0; i < hex.length(); i++)
+	{
+		std::map<char, std::string>::const_iterator it;
+		it = hexaRepMap.find(hex[i]);
+		bin.append(it->second);
+	}
+	//delete 0 meaningless
+	int i = 0;
+	while (bin[i] == '0' && bin.length() > 1)
+		i++;
+	bin.erase(0, i);
+	this->readBinString(bin);
 }
 
 void QInt::turnOnBit(int pos)
