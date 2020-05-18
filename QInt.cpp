@@ -728,6 +728,42 @@ std::string QInt::findDiff(std::string str1, std::string str2)
 	return str;
 }
 
+
+QInt QInt::operator*(QInt x)
+{
+	int isNegative;
+	if ((*this < 0 && x < 0) || (*this > 0 && x > 0))
+	{
+		isNegative = 0;
+		*this = abs(*this);
+		x = abs(x);
+	}
+	else
+	{
+		isNegative = 1;
+		*this = abs(*this);
+		x = abs(x);
+	}
+	if (x == QInt("0") || *this == QInt("0"))
+		return QInt("0");
+
+
+	QInt res("0");
+	while (x > 0)
+	{
+		QInt temp_2("2");
+		QInt temp_1("1");
+		if (x % temp_2 == temp_1 || x == temp_1)
+			res = res + *this;
+		*this = *this << 1;
+		x = x >> 1;
+	}
+
+	if (isNegative == 1)
+		res = ~res + 1;
+	return res;
+}
+
 // Use Binary Division Algorithm to execute
 // ref: https://en.wikipedia.org/wiki/Division_algorithm
 QInt QInt::operator/(QInt x)

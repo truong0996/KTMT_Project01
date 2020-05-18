@@ -44,6 +44,7 @@ public:
 	QInt rol();
 	QInt ror();
 
+	QInt operator*(QInt x);
 	QInt operator/(QInt x);
 	QInt operator%(QInt x);
 
