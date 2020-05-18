@@ -286,7 +286,7 @@ QInt QInt::operator>>(int x)
 		// Shift right sign bit
 		if (bit_sign == 1)
 		{
-			for (int i = 1; i <= quot * 32; i++)
+			for (int i = 0; i < quot * 32; i++)
 			{
 				temp.toggleBit(i);
 			}
@@ -317,7 +317,7 @@ QInt QInt::operator>>(int x)
 	{
 		for (int i = 0; i < x; i++)
 		{
-			this->toggleBit(i + 1);
+			this->toggleBit(i);
 		}
 	}
 	return *this;
