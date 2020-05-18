@@ -59,6 +59,8 @@ public:
 	std::string toString();
 	std::string squareString(int n);
 	std::string addString(std::string a, std::string b);
+	std::string findDiff(std::string str1, std::string str2);
+	bool isSmaller(std::string str1, std::string str2);
 };
 
 //Hexadecimal represent in bit

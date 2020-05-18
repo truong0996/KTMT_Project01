@@ -78,7 +78,7 @@ QInt QInt::operator+(const QInt &x)
 	QInt rs;
 	int temp = 0;
 	unsigned int bit, xBit;
-	for (int i = 127; i > 0; i--)
+	for (int i = 127; i >= 0; i--)
 	{
 		bit = this->getBit(i);
 		xBit = x.getBit(i);
@@ -121,7 +121,7 @@ bool QInt::operator==(const QInt &x)
 bool QInt::operator<(const QInt &x)
 {
 	QInt t = *this - x;
-	if (((1 << 31) + 1 & t.arrBits[0]) == 1)
+	if ((t.arrBits[0] >> 31 & 1) == 1)
 		return true;
 	return false;
 }
@@ -353,7 +353,7 @@ QInt QInt::rol()
 	int n = this->toBin().length();
 
 	int tempBit = this->getBit(127 - (n - 1)); //lấy bit trái nhất
-	*this = *this << 1;		   //dịch trái
+	*this = *this << 1;						   //dịch trái
 	if (tempBit == 1)
 	{
 		this->turnOffBit(127 - n); //tắt bit
@@ -518,6 +518,12 @@ std::string QInt::toString()
 			result = temp.addString(result, t);			// += 2^(i-1)
 		}
 	}
+	int bit;
+	if (bit = temp.getBit(0))
+	{
+		std::string t = temp.squareString(127); // -2^127, lower boundary of 128 bits
+		result = temp.findDiff(t, result);
+	}
 	QInt _temp;
 	if ((*this) < _temp)
 		result.insert(0, "-");
@@ -595,13 +601,111 @@ std::string QInt::addString(std::string a, std::string b)
 	}
 }
 
+// Returns true if str1 is smaller than str2.
+bool QInt::isSmaller(std::string str1, std::string str2)
+{
+	// Calculate lengths of both string
+	int n1 = str1.length(), n2 = str2.length();
+
+	if (n1 < n2)
+		return true;
+	if (n2 < n1)
+		return false;
+
+	for (int i = 0; i < n1; i++)
+		if (str1[i] < str2[i])
+			return true;
+		else if (str1[i] > str2[i])
+			return false;
+
+	return false;
+}
+
+// Function for find difference of larger numbers
+std::string QInt::findDiff(std::string str1, std::string str2)
+{
+	// Before proceeding further, make sure str1
+	// is not smaller
+	if (isSmaller(str1, str2))
+		swap(str1, str2);
+
+	// Take an empty string for storing result
+	std::string str = "";
+
+	// Calculate length of both string
+	int n1 = str1.length(), n2 = str2.length();
+
+	// Reverse both of strings
+	reverse(str1.begin(), str1.end());
+	reverse(str2.begin(), str2.end());
+
+	int carry = 0;
+
+	// Run loop till small string length
+	// and subtract digit of str1 to str2
+	for (int i = 0; i < n2; i++)
+	{
+		// Do school mathematics, compute difference of
+		// current digits
+
+		int sub = ((str1[i] - '0') - (str2[i] - '0') - carry);
+
+		// If subtraction is less then zero
+		// we add then we add 10 into sub and
+		// take carry as 1 for calculating next step
+		if (sub < 0)
+		{
+			sub = sub + 10;
+			carry = 1;
+		}
+		else
+			carry = 0;
+
+		str.push_back(sub + '0');
+	}
+
+	// subtract remaining digits of larger number
+	for (int i = n2; i < n1; i++)
+	{
+		int sub = ((str1[i] - '0') - carry);
+
+		// if the sub value is -ve, then make it positive
+		if (sub < 0)
+		{
+			sub = sub + 10;
+			carry = 1;
+		}
+		else
+			carry = 0;
+
+		str.push_back(sub + '0');
+	}
+
+	// reverse resultant string
+	reverse(str.begin(), str.end());
+
+	//delete 0 meaningless
+	int i = 0;
+	while (str[i] == '0' && str.length() > 1)
+		i++;
+	str.erase(0, i);
+
+	return str;
+}
+
 // Use Binary Division Algorithm to execute
 // ref: https://en.wikipedia.org/wiki/Division_algorithm
 QInt QInt::operator/(QInt x)
 {
 	// absorb 2 QInt first
 	int isNegative = 0;
-	if (*this < 0 || x < 0)
+	if (*this < 0 && x < 0)
+	{
+		isNegative = 0;
+		*this = abs(*this);
+		x = abs(x);
+	}
+	else if (*this < 0 || x < 0)
 	{
 		isNegative = 1;
 		*this = abs(*this);
@@ -629,7 +733,7 @@ QInt QInt::operator/(QInt x)
 		if (r >= x)
 		{
 			r = r - x;
-			q = q | 1;	// set quotient 's 0-th bit = 1
+			q = q | 1; // set quotient 's 0-th bit = 1
 		}
 	}
 	if (isNegative)
@@ -644,7 +748,13 @@ QInt QInt::operator%(QInt x)
 {
 	// absorb 2 QInt first
 	int isNegative = 0;
-	if (*this < 0 || x < 0)
+	if (*this < 0 && x < 0)
+	{
+		isNegative = 0;
+		*this = abs(*this);
+		x = abs(x);
+	}
+	else if (*this < 0 || x < 0)
 	{
 		isNegative = 1;
 		*this = abs(*this);
@@ -672,7 +782,7 @@ QInt QInt::operator%(QInt x)
 		if (r >= x)
 		{
 			r = r - x;
-			q = q | 1;	// set quotient 's 0-th bit = 1
+			q = q | 1; // set quotient 's 0-th bit = 1
 		}
 	}
 	if (isNegative)
