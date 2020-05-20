@@ -831,8 +831,7 @@ QInt QInt::operator%(QInt x)
 
 	if (*this < x)
 	{
-		QInt _temp; //return 0
-		return _temp;
+		return *this;
 	}
 
 	QInt q = 0; // quotient
