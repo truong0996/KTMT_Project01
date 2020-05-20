@@ -97,6 +97,14 @@ QInt QInt::operator+(const QInt &x)
 			break;
 		}
 	}
+	// Overflow handle
+	int bit_this = this->arrBits[0] >> 31 & 1;
+	int bit_x = x.arrBits[0] >> 31 & 1;
+	int bit_rs = rs.arrBits[0] >> 31 & 1;
+	if ((bit_this == 0 && bit_x == 0) && bit_rs == 1) //*this, x > 0 ; rs < 0
+		rs = 0;
+	else if ((bit_this == 1 && bit_x == 1) && bit_rs == 0) //*this, x < 0 ; rs > 0
+		rs = 0;
 	return rs;
 }
 
@@ -118,6 +126,8 @@ bool QInt::operator==(const QInt &x)
 	return true;
 }
 
+// ------operator <,>,<=,>=
+
 bool QInt::operator<(const QInt &x)
 {
 	QInt t = *this - x;
@@ -129,7 +139,6 @@ bool QInt::operator<(int x)
 {
 	return this->operator<(QInt(x));
 }
-
 bool QInt::operator>(const QInt &x)
 {
 	if (*this < x)
@@ -142,7 +151,6 @@ bool QInt::operator>(int x)
 {
 	return this->operator>(QInt(x));
 }
-
 bool QInt::operator>=(const QInt &x)
 {
 	if (*this < x)
@@ -153,7 +161,6 @@ bool QInt::operator>=(int x)
 {
 	return this->operator>=(QInt(x));
 }
-
 bool QInt::operator<=(const QInt &x)
 {
 	if (*this > x)
@@ -725,7 +732,6 @@ std::string QInt::findDiff(std::string str1, std::string str2)
 	return str;
 }
 
-
 QInt QInt::operator*(QInt x)
 {
 	int isNegative;
@@ -743,7 +749,6 @@ QInt QInt::operator*(QInt x)
 	}
 	if (x == QInt("0") || *this == QInt("0"))
 		return QInt("0");
-
 
 	QInt res("0");
 	while (x > 0)

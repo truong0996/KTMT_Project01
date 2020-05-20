@@ -18,4 +18,5 @@ int main(int argc, char* argv[])
 		ans = calculate(input);
 		writeFile(fout, ans);
 	}
+	return 0;
 }
