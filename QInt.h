@@ -31,7 +31,7 @@ public:
 	bool operator>(int x);
 	bool operator>=(int x);
 	bool operator<=(int x);
-	
+
 	QInt operator&(const QInt &x);
 	QInt operator&(int x);
 	QInt operator|(const QInt &x);

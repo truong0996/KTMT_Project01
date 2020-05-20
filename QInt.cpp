@@ -355,10 +355,7 @@ QInt QInt::rol()
 	int tempBit = this->getBit(0); //lấy bit trái nhất
 	*this = *this << 1;			   //dịch trái
 	if (tempBit == 1)
-	{
-		this->turnOffBit(0);  //tắt bit
 		this->turnOnBit(127); // bật bit cuối
-	}
 
 	return *this;
 }
