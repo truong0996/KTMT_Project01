@@ -1,4 +1,3 @@
-#pragma once
 #include "QInt.h"
 #include <fstream>
 using namespace std;

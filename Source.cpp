@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	ifstream fin(argv[1]);
 	ofstream fout(argv[2]);

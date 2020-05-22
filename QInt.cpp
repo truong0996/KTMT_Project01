@@ -785,6 +785,11 @@ QInt QInt::operator/(QInt x)
 		x = abs(x);
 	}
 
+	if (x == 0) {
+		QInt _temp;	//return 0
+		return _temp;
+	}
+
 	if (*this < x)
 	{
 		QInt _temp; //return 0
@@ -832,6 +837,11 @@ QInt QInt::operator%(QInt x)
 		isNegative = 1;
 		*this = abs(*this);
 		x = abs(x);
+	}
+
+	if (x == 0) {
+		QInt _temp;	//return 0
+		return _temp;
 	}
 
 	if (*this < x)
